@@ -1,0 +1,11 @@
+MAX_FIRE = 20 # Maximum power! Fire! Fire! Fire!
+MAX_MOVE = 20
+MAX_TURN = 20
+MAX_TURRETMOVE = 20
+MAX_RADARMOVE = 20
+MAX_RADARBEAM = 100
+MIN_RADARBEAM = 0
+
+
+
+
