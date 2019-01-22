@@ -30,7 +30,7 @@ The tick function returns every frame update
 
 ##
 
-```
+```python
 from lib import brain
 class TemplateTank(brain.Brain):
 
@@ -74,7 +74,7 @@ with the Commands interface in the class Brain it is possible to control your ta
 |**displayRadar**| shows the radar beam for debugging purposes |
 
 example commands:
-```
+```python
 self._commands.fire(20)
 self._commands.turn(-5.5)
 self._commands.move(-10.2) #
@@ -114,6 +114,7 @@ _“Letting it get to you. You know what that’s called? Being alive. Best thin
 
 Send me a high-five or star this git if you like this project 8-)
 SEVAqwjeHAmS7He3kCuQEBHv9LYN2eAoNXYbrYYEFgPa9bMs99MNKrkbkb7TE6WhRMbgE6cavhrQHLHoSkMkZW6n6UZQAit8tZ6
+
 [https://t.me/sevabit]
 
 
