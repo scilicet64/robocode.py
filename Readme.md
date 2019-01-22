@@ -10,6 +10,9 @@ This game is part of a Python programming course, with assignments and videos(tb
 Develop the _Brains_ of a tank to **Exterminate!!!** opponents
 
 
+### Screenshot
+
+![Screenshot](/extra/PyTanks-Screenshot.PNG?raw=true "Robocode.Py Screenshot")
 
 ### Quick guide
 
