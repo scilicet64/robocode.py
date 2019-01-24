@@ -1,7 +1,7 @@
 import tank
 import gameobjectinfo
 
-class LifeBar():
+class LifeBar(object):
     def __init__(self,name=None):
         screen = tank.Screen()
         __height = 3

@@ -1,6 +1,6 @@
 import configuration
 
-class Commands:
+class Commands(object):
     def __init__(self):
         self.__data = {}
 

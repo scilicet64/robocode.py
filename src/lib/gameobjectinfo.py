@@ -1,4 +1,4 @@
-class Gameobjectinfo():
+class Gameobjectinfo(object):
     def __init__(self,playerClass):
         self.__name = None
         self.__animation = None

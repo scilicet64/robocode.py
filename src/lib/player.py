@@ -8,8 +8,11 @@ import base64
 import random
 import configuration
 import math
+import robothread
+import datetime
+from time import sleep
 
-class Player():
+class Player(object):
     __playerNumber = 0
     __playerlife = 100
     __fireheatcounter=0
@@ -21,6 +24,8 @@ class Player():
     __team=None
     __teamcolor=None ## todo make Class Team
     __brain=None
+    __commandAllowed=False
+    __commands=None
 
     def __init__(self,name=None,startPos=(0.0,0.0),startHeading=0,newbrain=None):
         Player.__playerNumber += 1
@@ -83,14 +88,35 @@ class Player():
             self.__localtank.write(arg, False, align="center",offset=(0,-40))
             self.displayLifebar()
             if (self.__radar!= None):
-                self.__radar.tick()
+                robothread.RoboThread(self.__radar.tick)
 
         if (self.playerlife() <= 0):
             self.killed()
+        self.__processBullets()
 
+        if self.__brain!=None :
+            showdata={"alive":True}
+            if(self.__localtank!=None):
+                showdata.update( {"position":self.__localtank.pos(), "heading":self.__localtank.heading(),"fireheat":self.__fireheatcounter} )
+                if self.__radar!=None:
+                    showdata.update({"reflections":self.__radar.reflections()})
+            else:
+                showdata.update({"alive":False})
+            self.__commandAllowed = True
+            a = datetime.datetime.now()
+            commands = self.__brain.tick(showdata)
+            b = datetime.datetime.now()
+            delta = b - a
+            ms = int(delta.total_seconds() * 1000)  # milliseconds
+            if(ms>2):
+                self.__playerlife-=0.5 #punish for being slow
+            #    print("WARNING: tick tocking too long")
+            self.processCommands(commands)
+
+
+    def __processBullets(self):
         for bullet in self.__bullets:
             if bullet.not_exploded():
-
                 if(bullet.isOncanvas() ):
                     bullet.processCollision()
                     self.__score+=bullet.hitpoints()
@@ -105,53 +131,6 @@ class Player():
                 else:
                     bullet.extrainfo().animation().tick()
 
-        if self.__brain!=None :
-            showdata={"alive":True}
-            if(self.__localtank!=None):
-                showdata.update( {"position":self.__localtank.pos(), "heading":self.__localtank.heading(),"fireheat":self.__fireheatcounter} )
-                if self.__radar!=None:
-                    showdata.update({"reflections":self.__radar.reflections()})
-            else:
-                showdata.update({"alive":False})
-
-            commands = self.__brain.tick(showdata)
-            if isinstance(commands, dict):
-                keys = commands.keys()
-                if "move" in keys:
-                    distance = float(commands.get("move"))
-                    if (abs(distance) <= configuration.MAX_MOVE):
-                        self.move(distance)
-                if "turn" in keys:
-                    angle = float(commands.get("turn"))
-                    if (abs(angle) <= configuration.MAX_TURN):
-                        self.turn(angle)
-                if "turret" in keys:
-                    angle = float(commands.get("turret"))
-                    if (abs(angle) <= configuration.MAX_TURRETMOVE):
-                        self.moveTurret(angle)
-                if "radar" in keys:
-                    angle = float(commands.get("radar"))
-                    if (abs(angle) <= configuration.MAX_RADARMOVE):
-                        self.moveRadar(angle)
-                if "fire" in keys:
-                    power = float(commands.get("fire"))
-                    if (abs(angle) <= configuration.MAX_FIRE):
-                        self.fire(abs(power))
-                if "radarbeam" in keys:
-                    angle = float(commands.get("radarbeam"))
-                    if (abs(angle) >= configuration.MIN_RADARBEAM) and (abs(angle) <= configuration.MAX_RADARBEAM):
-                        self.__radar.setbeam(abs(angle))
-                if "displayRadar" in keys:
-                    self.displayRadar()
-                if "hideRadar" in keys:
-                    self.hideRadar()
-                if base64.b64decode('QUJBQ0FCQg==') in keys: # "undocumented hidden implementation"
-                    if not hasattr(self, '_Player__bc'): print(base64.b64decode('Qmxvb2QtY29kZSBhY3RpdmF0ZWQhISEhISE='))
-                    self.__bc = True
-
-
-            else:
-                raise BaseException("Brain tick function is not returning a dict")
 
     def displayLifebar(self):
         if (self.__playerlife > 0):
@@ -259,3 +238,49 @@ class Player():
         self.__teamname=teamName
         self.__team=team
         print ("to be implemented")
+
+    def startThread(self):
+        robothread.RoboThread(self.__brain.start,None)
+
+    def stopThread(self):
+        self.__brain.stop()
+
+
+    def processCommands(self,commands):
+            if isinstance(commands, dict):
+                keys = commands.keys()
+                if "move" in keys:
+                    distance = float(commands.get("move"))
+                    if (abs(distance) <= configuration.MAX_MOVE):
+                        self.move(distance)
+                if "turn" in keys:
+                    angle = float(commands.get("turn"))
+                    if (abs(angle) <= configuration.MAX_TURN):
+                        self.turn(angle)
+                if "turret" in keys:
+                    angle = float(commands.get("turret"))
+                    if (abs(angle) <= configuration.MAX_TURRETMOVE):
+                        self.moveTurret(angle)
+                if "radar" in keys:
+                    angle = float(commands.get("radar"))
+                    if (abs(angle) <= configuration.MAX_RADARMOVE):
+                        self.moveRadar(angle)
+                if "fire" in keys:
+                    power = float(commands.get("fire"))
+                    if (abs(angle) <= configuration.MAX_FIRE):
+                        self.fire(abs(power))
+                if "radarbeam" in keys:
+                    angle = float(commands.get("radarbeam"))
+                    if (abs(angle) >= configuration.MIN_RADARBEAM) and (abs(angle) <= configuration.MAX_RADARBEAM):
+                        self.__radar.setbeam(abs(angle))
+                if "displayRadar" in keys:
+                    self.displayRadar()
+                if "hideRadar" in keys:
+                    self.hideRadar()
+                if base64.b64decode('QUJBQ0FCQg==') in keys:  # "undocumented hidden implementation"
+                    if not hasattr(self, '_Player__bc'): print(base64.b64decode('Qmxvb2QtY29kZSBhY3RpdmF0ZWQhISEhISE='))
+                    self.__bc = True
+
+
+            else:
+                raise BaseException("Brain tick function is not returning a dict")

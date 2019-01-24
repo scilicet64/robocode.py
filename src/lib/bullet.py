@@ -2,7 +2,7 @@ import tank
 import gameobjectinfo
 import explosion
 
-class Bullet():
+class Bullet(object):
     def __init__(self,startpos,name,power,heading,localtank):
         screen = tank.Screen()
         self.__bulletshape =screen.register_shape("./images/bullet.png")

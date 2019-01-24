@@ -1,7 +1,7 @@
 import tank
 
 
-class Explosion:
+class Explosion(object):
     __status = "init"
     __MAXFRAME = 71
     __frames = ["empty_startframe"]

@@ -3,11 +3,14 @@ import random
 import player
 import explosion
 import Tkinter
+import datetime
 
-class GameInfo:
+
+class GameInfo(object):
     __Players=[]
     __Gametime=0
     __playing=False
+
 
     def __init__(self):
         self.__screen = tank.Screen()
@@ -82,18 +85,26 @@ class GameInfo:
 
     def frame(self):
             try: #dont use try for debugging, only for  playing
+                a = datetime.datetime.now()
                 for player in self.__Players:
                     player.tickfunction()
                 self.__screen.update()
-                if not self.checkEnd():
-                    self.__screen.ontimer(self.frame, 10)
-                else:
-                    self.__playing=False
-                    self.displayscores()
-                    self.__screen.ontimer(self.end, 10)
                 #cleanup dead and unused objects
                 for player in self.__Players:
                     player.cleanup()
+                b = datetime.datetime.now()
+                delta = b-a
+                ms = int(delta.total_seconds() * 1000)  # milliseconds
+                if ms>=25:
+                    wait =0
+                else:
+                    wait = 25 - ms
+                if not self.checkEnd():
+                    self.__screen.ontimer(self.frame, wait)
+                else:
+                    self.__playing=False
+                    self.displayscores()
+                    self.__screen.ontimer(self.end, 25)
             except Exception as e:
                 if self.__screen._RUNNING:
                     print("exception: " + str(e))
@@ -102,6 +113,8 @@ class GameInfo:
     def start(self):
         self.__screen.update()
         self.__playing=True
+        for player in self.__Players:
+            player.startThread()
         self.__screen.ontimer(self.frame, 25)
 
     def end(self):
@@ -135,3 +148,6 @@ class GameInfo:
             print(name, accuracy)
         print("Game end.")
 
+    def stop(self):
+        for player in self.__Players:
+            player.stopThread()

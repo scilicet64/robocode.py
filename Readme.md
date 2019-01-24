@@ -3,6 +3,7 @@
 ## - a programming game for Python based on Robocode and Turtle.py
 ***
 This game is part of a Python programming course, with assignments and videos(tba)
+* Develop the _Brains_ of your tank to **Exterminate!!!** opponents
 ***
 
 ### Goal
@@ -100,7 +101,7 @@ self._commands.displayRadar()
 
 
 ## Requirements
-we need **matplotlib** for detection of targets in radar and PIL (pillow) library
+we need **matplotlib** for detection of targets in radar and PIL (**pillow**) library
 
 required libraries can be installed for example with pip:
 * pip install matplotlib
@@ -115,6 +116,6 @@ _“Letting it get to you. You know what that’s called? Being alive. Best thin
 Send me a high-five or star this git if you like this project 8-)
 SEVAqwjeHAmS7He3kCuQEBHv9LYN2eAoNXYbrYYEFgPa9bMs99MNKrkbkb7TE6WhRMbgE6cavhrQHLHoSkMkZW6n6UZQAit8tZ6
 
-[https://t.me/sevabit]
+https://t.me/sevabit
 
 

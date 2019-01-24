@@ -1,9 +1,12 @@
 import tank
 import math
 import gameobjectinfo
-import matplotlib.path as mpltPath
+import matplotlib
+matplotlib.use('Agg')
 
-class Radar:
+
+
+class Radar(object):
     def __init__(self,name=None,gameobject=None,startPos=None):
         screen = tank.Screen()
         __height = 150
@@ -59,7 +62,7 @@ class Radar:
             pos = hitobject.pos()
             points = [pos]
             polygon = self.__radar._polytrafo(self.__poly)
-            path = mpltPath.Path(polygon)
+            path = matplotlib.path.Path(polygon)
             inside = path.contains_points(points)
             if (inside):
                 self.__reflections.append(pos)
